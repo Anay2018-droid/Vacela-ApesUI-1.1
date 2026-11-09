@@ -3,184 +3,1026 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vacela ApesUI 1.1</title>
+  <title>Vacela ApesUI 1.1 - Smart TV Operating System</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Phosphor Icons for TV OS icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <style>
-    :root {
-      --bg-color: #080c14;
-      --card-bg: rgba(18, 25, 43, 0.75);
-      --card-border: rgba(0, 229, 255, 0.2);
-      --accent: #00e5ff;
-      --accent-glow: rgba(0, 229, 255, 0.4);
-      --text-main: #f0f6fc;
-      --text-muted: #8b949e;
-      --focus-ring: #00e5ff;
-    }
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
+    :root {
+      --font-main: 'Space Grotesk', sans-serif;
+      --font-code: 'JetBrains Mono', monospace;
+      --accent-cyan: #00e5ff;
+      --accent-cyan-glow: rgba(0, 229, 255, 0.45);
     }
 
     body {
-      background: var(--bg-color);
-      color: var(--text-main);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      overflow: hidden;
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      background-size: cover;
-      background-position: center;
-      transition: background 0.4s ease;
+      font-family: var(--font-main);
+      overflow-x: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+      background: radial-gradient(circle at 50% 10%, #081220 0%, #040812 55%, #020408 100%);
     }
 
-    /* Status Bar */
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.5rem 3rem;
-      background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
-      z-index: 10;
-    }
-
-    .brand-title {
-      font-size: 1.6rem;
-      font-weight: 700;
-      letter-spacing: 2px;
-      color: var(--accent);
-      text-shadow: 0 0 12px var(--accent-glow);
-    }
-
-    .brand-version {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      border: 1px solid var(--card-border);
-      padding: 0.2rem 0.6rem;
-      border-radius: 999px;
-      margin-left: 0.8rem;
-    }
-
-    .clock-display {
-      font-size: 1.4rem;
-      font-weight: 500;
-      letter-spacing: 1px;
-    }
-
-    /* Main Grid */
-    .content-area {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 0 3rem;
-    }
-
-    .section-label {
-      font-size: 1.1rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      margin-bottom: 1.5rem;
-    }
-
-    .app-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 2rem;
-      max-width: 1400px;
-    }
-
-    .tv-tile {
-      background: var(--card-bg);
-      border: 2px solid var(--card-border);
-      border-radius: 18px;
-      padding: 2.2rem 1.8rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      cursor: pointer;
-      backdrop-filter: blur(12px);
+    /* Custom Focus Ring for TV Remote Navigation */
+    .tv-focusable {
       outline: none;
-      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
     }
 
-    .tv-tile:focus,
-    .tv-tile.selected {
-      transform: scale(1.06);
-      border-color: var(--focus-ring);
-      box-shadow: 0 0 25px var(--accent-glow), 0 10px 30px rgba(0, 0, 0, 0.7);
+    .tv-focusable.focused,
+    .tv-focusable:focus {
+      transform: scale(1.05);
+      z-index: 30;
+      box-shadow: 0 0 0 3px #00e5ff, 0 10px 30px -5px rgba(0, 229, 255, 0.5);
     }
 
-    .tile-icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-    }
-
-    .tile-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin-bottom: 0.4rem;
-    }
-
-    .tile-desc {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    /* Bottom Info & Navigation Helper */
-    .footer-bar {
-      padding: 1.2rem 3rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(0,0,0,0.4);
-    }
-
-    .remote-hints span {
-      background: rgba(255, 255, 255, 0.12);
-      padding: 0.2rem 0.6rem;
-      border-radius: 4px;
-      font-weight: 600;
-      color: var(--text-main);
-      margin: 0 0.2rem;
-    }
-
-    /* Modal / Window Shell */
-    .app-window {
-      position: fixed;
-      top: 5%;
-      left: 5%;
-      width: 90%;
-      height: 90%;
-      background: rgba(10, 14, 23, 0.96);
-      border: 2px solid var(--accent);
-      box-shadow: 0 0 40px rgba(0, 229, 255, 0.3);
-      border-radius: 20px;
-      z-index: 100;
-      display: none;
-      flex-direction: column;
-      overflow: hidden;
+    /* Glassmorphism styling */
+    .glass-panel {
+      background: rgba(10, 22, 38, 0.75);
       backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(0, 229, 255, 0.2);
     }
 
-    .window-header {
-      padding: 1.2rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--card-border);
-      background: rgba(0,0,0,0.5);
+    .glass-card {
+      background: rgba(14, 27, 48, 0.65);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(0, 229, 255, 0.15);
     }
 
-    .window-title {
-      font-size: 1.3rem;
-      font-
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(0, 229, 255, 0.25);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 229, 255, 0.5);
+    }
+
+    /* Piano Key Styling */
+    .piano-key {
+      transition: all 0.1s ease;
+    }
+    .piano-key.active-key {
+      background: linear-gradient(180deg, #00e5ff 0%, #0284c7 100%) !important;
+      color: #000000 !important;
+      transform: translateY(4px);
+      box-shadow: 0 0 25px rgba(0, 229, 255, 0.8);
+    }
+  </style>
+</head>
+<body id="os-root" class="text-cyan-50 min-h-screen relative antialiased overflow-y-auto">
+
+  <!-- Ambient Animated Glow Orbs -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+    <div id="orb-1" class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-cyan-500/15 blur-3xl transition-all duration-1000"></div>
+    <div id="orb-2" class="absolute top-1/3 -right-32 w-[32rem] h-[32rem] rounded-full bg-sky-600/10 blur-3xl transition-all duration-1000"></div>
+    <div id="orb-3" class="absolute -bottom-32 left-1/3 w-96 h-96 rounded-full bg-blue-700/15 blur-3xl transition-all duration-1000"></div>
+  </div>
+
+  <!-- Main OS Wrapper -->
+  <div class="relative z-10 flex flex-col min-h-screen px-6 py-5 md:px-12 md:py-8">
+
+    <!-- TOP STATUS BAR -->
+    <header class="flex items-center justify-between pb-6 border-b border-cyan-500/20">
+      <!-- OS Brand and Version -->
+      <div class="flex items-center gap-4">
+        <div class="h-11 w-11 rounded-xl bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+          <i class="ph-bold ph-television-simple text-2xl text-black"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl md:text-2xl font-bold tracking-tight bg-gradient-to-r from-cyan-400 via-sky-200 to-blue-400 bg-clip-text text-transparent">
+              Vacela ApesUI 1.1
+            </h1>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wider uppercase bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+              Cyber Core TV
+            </span>
+          </div>
+          <p class="text-xs text-cyan-200/60">Leanback TV Hub &bull; Remote Spatial Navigation Environment</p>
+        </div>
+      </div>
+
+      <!-- Quick Nav Info & System Indicators -->
+      <div class="flex items-center gap-4 md:gap-8">
+        <button id="nav-guide-btn" onclick="openApp('navguide')" class="tv-focusable hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg glass-card text-xs text-cyan-200 hover:text-white hover:border-cyan-400/50">
+          <i class="ph-bold ph-game-controller text-cyan-400"></i>
+          <span>D-Pad Active</span>
+        </button>
+
+        <!-- Live Clock & Date -->
+        <div class="text-right">
+          <div id="os-clock" class="text-lg md:text-xl font-bold tracking-wider text-cyan-100 font-mono">12:00:00</div>
+          <div id="os-date" class="text-[11px] text-cyan-300/60 font-medium">Monday, Nov 9</div>
+        </div>
+
+        <!-- Status Icons -->
+        <div class="flex items-center gap-3 text-cyan-200 pl-4 border-l border-cyan-500/20">
+          <i class="ph-fill ph-wifi-high text-lg text-emerald-400" title="Connected"></i>
+          <i id="audio-status-icon" class="ph-fill ph-speaker-high text-lg text-cyan-400" title="Audio Enabled"></i>
+          <i class="ph-fill ph-battery-charging text-lg text-cyan-300" title="Power Ready"></i>
+        </div>
+      </div>
+    </header>
+
+    <!-- HERO SPOTLIGHT BANNER -->
+    <section class="mt-6">
+      <div class="relative overflow-hidden rounded-3xl glass-panel p-6 md:p-8 border border-cyan-500/20 shadow-2xl">
+        <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-gradient-to-br from-cyan-500/20 to-blue-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+        <div class="max-w-2xl relative z-10">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-400/10 border border-cyan-400/30 text-cyan-300 text-xs font-semibold mb-3">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+            VACELA CORE &bull; AUDIO & MEDIA SUITE
+          </div>
+          <h2 class="text-2xl md:text-4xl font-extrabold tracking-tight text-white mb-2 leading-tight">
+            Leanback Media & Classical Sargam
+          </h2>
+          <p class="text-cyan-100/80 text-sm md:text-base mb-6 leading-relaxed">
+            Run an adaptive YouTube launcher across TV and tablet, synthesize Indian Classical scales on keyboard and remote, and inspect system telemetry with zero installation.
+          </p>
+          <div class="flex flex-wrap items-center gap-4">
+            <button onclick="openApp('synth')" class="tv-focusable px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-bold text-sm flex items-center gap-2 shadow-lg shadow-cyan-500/30 hover:brightness-110 active:scale-95">
+              <i class="ph-bold ph-piano-keys text-lg"></i>
+              <span>Launch Synthesizer</span>
+            </button>
+            <button onclick="launchAdaptiveYouTube()" class="tv-focusable px-5 py-3 rounded-xl glass-card text-cyan-200 text-sm font-semibold hover:text-white hover:bg-cyan-500/20 flex items-center gap-2">
+              <i class="ph-bold ph-youtube-logo text-red-500 text-lg"></i>
+              <span>Open YouTube App</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- APP SHELF (MAIN GRID) -->
+    <main class="mt-8 flex-1">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-xs uppercase font-bold tracking-widest text-cyan-300/80 flex items-center gap-2">
+          <i class="ph-fill ph-grid-four text-cyan-400"></i>
+          Core TV Applications
+        </h3>
+        <span class="text-xs text-cyan-400/60 font-mono">6 APPS INSTALLED</span>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-5" id="app-shelf">
+
+        <!-- 1. YouTube Adaptive Launcher -->
+        <div onclick="launchAdaptiveYouTube()" class="tv-focusable glass-card rounded-2xl p-5 cursor-pointer group hover:border-red-500/50 flex flex-col justify-between h-48">
+          <div class="h-14 w-14 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 text-3xl group-hover:scale-110 transition-transform">
+            <i class="ph-fill ph-youtube-logo"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-base text-white group-hover:text-red-400 transition-colors">YouTube</h4>
+            <p class="text-xs text-cyan-200/60 mt-1">Smart TV Leanback & Android Intent</p>
+          </div>
+        </div>
+
+        <!-- 2. Sargam Synthesizer -->
+        <div onclick="openApp('synth')" class="tv-focusable glass-card rounded-2xl p-5 cursor-pointer group hover:border-cyan-400/50 flex flex-col justify-between h-48">
+          <div class="h-14 w-14 rounded-2xl bg-cyan-400/10 border border-cyan-400/30 flex items-center justify-center text-cyan-300 text-3xl group-hover:scale-110 transition-transform">
+            <i class="ph-bold ph-piano-keys"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-base text-white group-hover:text-cyan-300 transition-colors">Sargam Synth</h4>
+            <p class="text-xs text-cyan-200/60 mt-1">Indian Classical 8-Key Engine</p>
+          </div>
+        </div>
+
+        <!-- 3. Realtime Scope -->
+        <div onclick="openApp('scope')" class="tv-focusable glass-card rounded-2xl p-5 cursor-pointer group hover:border-sky-400/50 flex flex-col justify-between h-48">
+          <div class="h-14 w-14 rounded-2xl bg-sky-500/10 border border-sky-400/30 flex items-center justify-center text-sky-400 text-3xl group-hover:scale-110 transition-transform">
+            <i class="ph-bold ph-waveform"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-base text-white group-hover:text-sky-300 transition-colors">Neon Scope</h4>
+            <p class="text-xs text-cyan-200/60 mt-1">Real-time Audio Wave Visualizer</p>
+          </div>
+        </div>
+
+        <!-- 4. DAW & Chords Studio -->
+        <div onclick="openApp('daw')" class="tv-focusable glass-card rounded-2xl p-5 cursor-pointer group hover:border-indigo-400/50 flex flex-col justify-between h-48">
+          <div class="h-14 w-14 rounded-2xl bg-indigo-500/10 border border-indigo-400/30 flex items-center justify-center text-indigo-400 text-3xl group-hover:scale-110 transition-transform">
+            <i class="ph-bold ph-music-notes"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-base text-white group-hover:text-indigo-300 transition-colors">DAW Studio</h4>
+            <p class="text-xs text-cyan-200/60 mt-1">Harmonic Chords & Composer</p>
+          </div>
+        </div>
+
+        <!-- 5. System Shell / Terminal -->
+        <div onclick="openApp('terminal')" class="tv-focusable glass-card rounded-2xl p-5 cursor-pointer group hover:border-emerald-400/50 flex flex-col justify-between h-48">
+          <div class="h-14 w-14 rounded-2xl bg-emerald-500/10 border border-emerald-400/30 flex items-center justify-center text-emerald-400 text-3xl group-hover:scale-110 transition-transform">
+            <i class="ph-bold ph-terminal-window"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-base text-white group-hover:text-emerald-300 transition-colors">Apes Shell</h4>
+            <p class="text-xs text-cyan-200/60 mt-1">Interactive Diagnostic Console</p>
+          </div>
+        </div>
+
+        <!-- 6. Settings & Diagnostics -->
+        <div onclick="openApp('settings')" class="tv-focusable glass-card rounded-2xl p-5 cursor-pointer group hover:border-cyan-400/50 flex flex-col justify-between h-48">
+          <div class="h-14 w-14 rounded-2xl bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center text-cyan-300 text-3xl group-hover:scale-110 transition-transform">
+            <i class="ph-bold ph-gear-six"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-base text-white group-hover:text-cyan-300 transition-colors">Settings</h4>
+            <p class="text-xs text-cyan-200/60 mt-1">Hardware Diagnostics & Audio</p>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- BOTTOM REMOTE CONTROL GUIDANCE -->
+    <footer class="mt-8 pt-5 border-t border-cyan-500/20 flex flex-wrap items-center justify-between text-xs text-cyan-300/70 gap-4">
+      <div class="flex items-center gap-4">
+        <span class="flex items-center gap-1.5"><kbd class="px-2 py-0.5 rounded bg-cyan-950 border border-cyan-500/40 text-cyan-200 font-mono">▲ ▼ ◄ ►</kbd> Navigate</span>
+        <span class="flex items-center gap-1.5"><kbd class="px-2 py-0.5 rounded bg-cyan-950 border border-cyan-500/40 text-cyan-200 font-mono">OK / Enter</kbd> Open</span>
+        <span class="flex items-center gap-1.5"><kbd class="px-2 py-0.5 rounded bg-cyan-950 border border-cyan-500/40 text-cyan-200 font-mono">Back / Esc</kbd> Close</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="text-emerald-400 font-mono flex items-center gap-1.5">
+          <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          Single-File TV Engine Active
+        </span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ================= MODALS & ACTIVE APPS ================= -->
+
+  <!-- MODAL: SARGAM SYNTHESIZER -->
+  <div id="modal-synth" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-4xl rounded-3xl p-6 md:p-8 border border-cyan-400/30 shadow-2xl relative flex flex-col">
+      <div class="flex items-center justify-between pb-4 border-b border-cyan-500/20">
+        <div class="flex items-center gap-3">
+          <div class="h-10 w-10 rounded-xl bg-cyan-400/10 border border-cyan-400/30 flex items-center justify-center text-cyan-300 text-xl">
+            <i class="ph-bold ph-piano-keys"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-lg text-white">Sargam Classical Synthesizer</h3>
+            <p class="text-xs text-cyan-200/60">Indian Classical Bilawal Scale &bull; Key of A (Sa = 220Hz)</p>
+          </div>
+        </div>
+        <button onclick="closeApp('synth')" class="tv-focusable h-9 w-9 rounded-xl glass-card flex items-center justify-center text-cyan-300 hover:text-white hover:border-cyan-400">
+          <i class="ph-bold ph-x text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Waveform & Controls -->
+      <div class="my-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="glass-card p-3 rounded-xl flex items-center justify-between">
+          <span class="text-xs text-cyan-200/80">Waveform:</span>
+          <select id="synth-wave" onchange="setWaveform(this.value)" class="tv-focusable bg-cyan-950 text-cyan-100 text-xs px-2 py-1 rounded border border-cyan-500/40">
+            <option value="sawtooth">Sawtooth (Sitar-like)</option>
+            <option value="sine">Sine (Flute-like)</option>
+            <option value="triangle">Triangle (Harmonium)</option>
+          </select>
+        </div>
+
+        <div class="glass-card p-3 rounded-xl flex items-center justify-between">
+          <span class="text-xs text-cyan-200/80">Octave Shift:</span>
+          <div class="flex gap-2">
+            <button onclick="shiftOctave(-1)" class="tv-focusable px-2 py-0.5 rounded bg-cyan-950 border border-cyan-500/40 text-xs">-1</button>
+            <span id="octave-display" class="font-mono text-xs text-cyan-300 px-1 py-0.5">Base</span>
+            <button onclick="shiftOctave(1)" class="tv-focusable px-2 py-0.5 rounded bg-cyan-950 border border-cyan-500/40 text-xs">+1</button>
+          </div>
+        </div>
+
+        <div class="glass-card p-3 rounded-xl flex items-center justify-between">
+          <span class="text-xs text-cyan-200/80">Keyboard Keys:</span>
+          <span class="text-[11px] font-mono text-cyan-400">Keys 1 to 8</span>
+        </div>
+      </div>
+
+      <!-- Sargam Piano Keys (Sa, Re, Ga, Ma, Pa, Dha, Ni, Sa') -->
+      <div class="grid grid-cols-8 gap-2 md:gap-3 py-6" id="piano-shelf">
+        <button onclick="playSargamNote(0)" data-key="1" class="tv-focusable piano-key glass-card hover:bg-cyan-500/20 rounded-2xl p-4 md:p-6 flex flex-col items-center justify-between h-44 text-center border border-cyan-500/30">
+          <span class="text-xs font-mono text-cyan-400">1</span>
+          <span class="text-xl md:text-2xl font-bold text-white">Sa</span>
+          <span class="text-[10px] text-cyan-300/60 font-mono">220.0 Hz</span>
+        </button>
+
+        <button onclick="playSargamNote(1)" data-key="2" class="tv-focusable piano-key glass-card hover:bg-cyan-500/20 rounded-2xl p-4 md:p-6 flex flex-col items-center justify-between h-44 text-center border border-cyan-500/30">
+          <span class="text-xs font-mono text-cyan-400">2</span>
+          <span class="text-xl md:text-2xl font-bold text-white">Re</span>
+          <span class="text-[10px] text-cyan-300/60 font-mono">246.9 Hz</span>
+        </button>
+
+        <button onclick="playSargamNote(2)" data-key="3" class="tv-focusable piano-key glass-card hover:bg-cyan-500/20 rounded-2xl p-4 md:p-6 flex flex-col items-center justify-between h-44 text-center border border-cyan-500/30">
+          <span class="text-xs font-mono text-cyan-400">3</span>
+          <span class="text-xl md:text-2xl font-bold text-white">Ga</span>
+          <span class="text-[10px] text-cyan-300/60 font-mono">277.2 Hz</span>
+        </button>
+
+        <button onclick="playSargamNote(3)" data-key="4" class="tv-focusable piano-key glass-card hover:bg-cyan-500/20 rounded-2xl p-4 md:p-6 flex flex-col items-center justify-between h-44 text-center border border-cyan-500/30">
+          <span class="text-xs font-mono text-cyan-400">4</span>
+          <span class="text-xl md:text-2xl font-bold text-white">Ma</span>
+          <span class="text-[10px] text-cyan-300/60 font-mono">293.7 Hz</span>
+        </button>
+
+        <button onclick="playSargamNote(4)" data-key="5" class="tv-focusable piano-key glass-card hover:bg-cyan-500/20 rounded-2xl p-4 md:p-6 flex flex-col items-center justify-between h-44 text-center border border-cyan-500/30">
+          <span class="text-xs font-mono text-cyan-400">5</span>
+          <span class="text-xl md:text-2xl font-bold text-white">Pa</span>
+          <span class="text-[10px] text-cyan-300/60 font-mono">329.6 Hz</span>
+        </button>
+
+        <button onclick="playSargamNote(5)" data-key="6" class="tv-focusable piano-key glass-card hover:bg-cyan-500/20 rounded-2xl p-4 md:p-6 flex flex-col items-center justify-between h-44 text-center border border-cyan-500/30">
+          <span class="text-xs font-mono text-cyan-400">6</span>
+          <span class="text-xl md:text-2xl font-bold text-white">Dha</span>
+          <span class="text-[10px] text-cyan-300/60 font-mono">370.0 Hz</span>
+        </button>
+
+        <button onclick="playSargamNote(6)" data-key="7" class="tv-focusable piano-key glass-card hover:bg-cyan-500/20 rounded-2xl p-4 md:p-6 flex flex-col items-center justify-between h-44 text-center border border-cyan-500/30">
+          <span class="text-xs font-mono text-cyan-400">7</span>
+          <span class="text-xl md:text-2xl font-bold text-white">Ni</span>
+          <span class="text-[10px] text-cyan-300/60 font-mono">415.3 Hz</span>
+        </button>
+
+        <button onclick="playSargamNote(7)" data-key="8" class="tv-focusable piano-key glass-card hover:bg-cyan-500/20 rounded-2xl p-4 md:p-6 flex flex-col items-center justify-between h-44 text-center border border-cyan-500/30">
+          <span class="text-xs font-mono text-cyan-400">8</span>
+          <span class="text-xl md:text-2xl font-bold text-white">Sa'</span>
+          <span class="text-[10px] text-cyan-300/60 font-mono">440.0 Hz</span>
+        </button>
+      </div>
+
+      <div class="flex items-center justify-between pt-4 border-t border-cyan-500/20 text-xs text-cyan-300/70">
+        <span>Press <kbd class="px-1.5 py-0.5 rounded bg-cyan-950 font-mono">1 - 8</kbd> on numeric remotes or click/tap keys.</span>
+        <button onclick="playSargamDemo()" class="tv-focusable px-3 py-1.5 rounded-lg bg-cyan-500/20 border border-cyan-400/40 text-cyan-200 hover:text-white">
+          Play Classical Arohana Demo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: REAL-TIME SCOPE -->
+  <div id="modal-scope" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-3xl rounded-3xl p-6 md:p-8 border border-sky-400/30 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-4 border-b border-cyan-500/20">
+        <div class="flex items-center gap-3">
+          <div class="h-10 w-10 rounded-xl bg-sky-400/10 border border-sky-400/30 flex items-center justify-center text-sky-400 text-xl">
+            <i class="ph-bold ph-waveform"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-lg text-white">Neon Audio Oscilloscope</h3>
+            <p class="text-xs text-cyan-200/60">Interactive Waveform Canvas Renderer</p>
+          </div>
+        </div>
+        <button onclick="closeApp('scope')" class="tv-focusable h-9 w-9 rounded-xl glass-card flex items-center justify-center text-cyan-300 hover:text-white">
+          <i class="ph-bold ph-x text-lg"></i>
+        </button>
+      </div>
+
+      <div class="my-6">
+        <canvas id="scope-canvas" class="w-full h-64 rounded-2xl bg-black/90 border border-cyan-500/30"></canvas>
+      </div>
+
+      <div class="flex items-center justify-between text-xs text-cyan-300/70">
+        <div class="flex items-center gap-2">
+          <span>Wave speed:</span>
+          <button onclick="adjustScopeSpeed(1)" class="tv-focusable px-2 py-1 rounded bg-cyan-950 border border-cyan-500/30">Normal</button>
+          <button onclick="adjustScopeSpeed(2)" class="tv-focusable px-2 py-1 rounded bg-cyan-950 border border-cyan-500/30">Fast</button>
+        </div>
+        <button onclick="testScopeBeep()" class="tv-focusable px-4 py-2 rounded-xl bg-cyan-400/20 border border-cyan-400/50 text-cyan-100 font-semibold hover:bg-cyan-400 hover:text-black">
+          Trigger Test Resonance Tone
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: DAW & CHORDS -->
+  <div id="modal-daw" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-3xl rounded-3xl p-6 md:p-8 border border-indigo-400/30 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-4 border-b border-cyan-500/20">
+        <div class="flex items-center gap-3">
+          <div class="h-10 w-10 rounded-xl bg-indigo-400/10 border border-indigo-400/30 flex items-center justify-center text-indigo-400 text-xl">
+            <i class="ph-bold ph-music-notes"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-lg text-white">DAW Harmonic Composer</h3>
+            <p class="text-xs text-cyan-200/60">Indian Classical Tanpura & Chord Pairings</p>
+          </div>
+        </div>
+        <button onclick="closeApp('daw')" class="tv-focusable h-9 w-9 rounded-xl glass-card flex items-center justify-center text-cyan-300 hover:text-white">
+          <i class="ph-bold ph-x text-lg"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
+        <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
+          <div>
+            <h4 class="font-bold text-white mb-1">A-Major Drone (Sa-Pa Drone)</h4>
+            <p class="text-xs text-cyan-200/60">Simulates Tanpura drone background sound (220Hz + 330Hz).</p>
+          </div>
+          <button id="drone-toggle-btn" onclick="toggleTanpuraDrone()" class="tv-focusable mt-4 px-4 py-2.5 rounded-xl bg-indigo-500/20 border border-indigo-400/40 text-indigo-200 hover:bg-indigo-500 hover:text-white text-xs font-semibold flex items-center justify-center gap-2">
+            <i class="ph-fill ph-play"></i>
+            <span>Start Ambient Drone</span>
+          </button>
+        </div>
+
+        <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
+          <div>
+            <h4 class="font-bold text-white mb-1">BandLab Web DAW</h4>
+            <p class="text-xs text-cyan-200/60">Launch full cloud digital audio workstation in a new tab.</p>
+          </div>
+          <a href="https://www.bandlab.com" target="_blank" class="tv-focusable mt-4 px-4 py-2.5 rounded-xl bg-cyan-500/20 border border-cyan-400/40 text-cyan-200 hover:bg-cyan-400 hover:text-black text-xs font-semibold flex items-center justify-center gap-2">
+            <i class="ph-bold ph-arrow-square-out"></i>
+            <span>Open BandLab Online</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: TERMINAL SHELL -->
+  <div id="modal-terminal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-3xl rounded-3xl p-6 md:p-8 border border-emerald-400/30 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-4 border-b border-cyan-500/20">
+        <div class="flex items-center gap-3">
+          <div class="h-10 w-10 rounded-xl bg-emerald-400/10 border border-emerald-400/30 flex items-center justify-center text-emerald-400 text-xl">
+            <i class="ph-bold ph-terminal-window"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-lg text-white">Apes Virtual Shell 1.1</h3>
+            <p class="text-xs text-cyan-200/60">Remote Diagnostic Environment</p>
+          </div>
+        </div>
+        <button onclick="closeApp('terminal')" class="tv-focusable h-9 w-9 rounded-xl glass-card flex items-center justify-center text-cyan-300 hover:text-white">
+          <i class="ph-bold ph-x text-lg"></i>
+        </button>
+      </div>
+
+      <div class="my-4">
+        <div id="term-log" class="w-full h-64 p-4 rounded-xl bg-black font-mono text-xs text-emerald-400 overflow-y-auto space-y-1.5 border border-emerald-500/20">
+          <div class="text-cyan-400 font-bold">Vacela ApesUI 1.1 Shell [TV Core Edition]</div>
+          <div>Type 'help' to see available diagnostics or 'sysinfo' for hardware data.</div>
+          <div class="text-emerald-500/50">---------------------------------------------------------</div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <span class="font-mono text-xs text-emerald-400">apes@tv:~$</span>
+        <input id="term-input" type="text" placeholder="Type command (e.g. sysinfo, help, sargam_scale, clear)..." class="tv-focusable flex-1 bg-black/80 border border-emerald-500/30 rounded-lg px-3 py-2 text-xs font-mono text-emerald-300 outline-none focus:border-emerald-400">
+        <button onclick="execTermCommand()" class="tv-focusable px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-semibold hover:bg-emerald-500 hover:text-black">Run</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: SETTINGS & HARDWARE -->
+  <div id="modal-settings" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-2xl rounded-3xl p-6 md:p-8 border border-cyan-400/30 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-4 border-b border-cyan-500/20">
+        <div class="flex items-center gap-3">
+          <div class="h-10 w-10 rounded-xl bg-cyan-400/10 border border-cyan-400/30 flex items-center justify-center text-cyan-300 text-xl">
+            <i class="ph-bold ph-gear-six"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-lg text-white">System Settings & Telemetry</h3>
+            <p class="text-xs text-cyan-200/60">Display and Audio Runtime Options</p>
+          </div>
+        </div>
+        <button onclick="closeApp('settings')" class="tv-focusable h-9 w-9 rounded-xl glass-card flex items-center justify-center text-cyan-300 hover:text-white">
+          <i class="ph-bold ph-x text-lg"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4 my-6">
+        <div class="glass-card p-4 rounded-xl flex items-center justify-between">
+          <div>
+            <div class="font-semibold text-white text-sm">Full-Screen Mode</div>
+            <div class="text-xs text-cyan-200/60">Expand browser window to borderless TV canvas.</div>
+          </div>
+          <button onclick="toggleFullScreen()" class="tv-focusable px-4 py-2 rounded-lg bg-cyan-500/20 border border-cyan-400/40 text-cyan-200 text-xs font-bold hover:bg-cyan-400 hover:text-black">
+            Toggle Fullscreen
+          </button>
+        </div>
+
+        <div class="glass-card p-4 rounded-xl flex items-center justify-between">
+          <div>
+            <div class="font-semibold text-white text-sm">Remote Navigation Click Sounds</div>
+            <div class="text-xs text-cyan-200/60">Play subtle sound when changing focus with arrow keys.</div>
+          </div>
+          <button id="nav-sound-toggle-btn" onclick="toggleNavSounds()" class="tv-focusable px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-bold">
+            ENABLED
+          </button>
+        </div>
+
+        <div class="glass-card p-4 rounded-xl">
+          <div class="font-semibold text-white text-sm mb-2">Display & Resolution Readout</div>
+          <div class="grid grid-cols-2 gap-2 text-xs font-mono text-cyan-300/80">
+            <div>Viewport: <span id="diag-res" class="text-white">--</span></div>
+            <div>Device Pixel Ratio: <span id="diag-dpr" class="text-white">--</span></div>
+            <div>User Agent Engine: <span id="diag-ua" class="text-white">--</span></div>
+            <div>GitHub Version: <span class="text-emerald-400">v1.1 (Stable)</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: TV REMOTE GUIDE -->
+  <div id="modal-navguide" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-lg rounded-3xl p-6 border border-cyan-400/30 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-4 border-b border-cyan-500/20">
+        <h3 class="font-bold text-white flex items-center gap-2">
+          <i class="ph-bold ph-game-controller text-cyan-400"></i>
+          Remote Spatial Navigation
+        </h3>
+        <button onclick="closeApp('navguide')" class="tv-focusable h-8 w-8 rounded-lg glass-card flex items-center justify-center text-cyan-300">
+          <i class="ph-bold ph-x"></i>
+        </button>
+      </div>
+      <div class="space-y-3 py-4 text-xs text-cyan-200/80 leading-relaxed">
+        <div class="flex items-center justify-between border-b border-cyan-500/10 pb-2">
+          <span>Arrow Keys / D-Pad</span>
+          <span class="font-mono text-white">Move Focus Across Tiles</span>
+        </div>
+        <div class="flex items-center justify-between border-b border-cyan-500/10 pb-2">
+          <span>Enter / OK Button</span>
+          <span class="font-mono text-white">Open Selected App / Play Note</span>
+        </div>
+        <div class="flex items-center justify-between border-b border-cyan-500/10 pb-2">
+          <span>Back / Return / Escape</span>
+          <span class="font-mono text-white">Close Active Modal / Exit</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span>Number Keys 1 - 8</span>
+          <span class="font-mono text-white">Play Sargam Synth Notes</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= CORE SCRIPTS ================= -->
+  <script>
+    /* -------------------------------------------------------------
+       1. SMART ADAPTIVE YOUTUBE LAUNCHER (Tablet vs Smart TV vs PC)
+       ------------------------------------------------------------- */
+    function launchAdaptiveYouTube() {
+      const ua = navigator.userAgent.toLowerCase();
+      
+      // Check for certified Smart TV platforms
+      const isSmartTV = /(smarttv|web0s|tizen|netcast|hbbtv|appletv|bravia|viera|crkey)/i.test(ua);
+      
+      // Check for Android tablets or phones
+      const isAndroid = /android/i.test(ua);
+
+      if (isSmartTV) {
+        // Certified Smart TV Leanback Interface
+        window.location.href = "https://www.youtube.com/tv";
+      } else if (isAndroid) {
+        // Android Tablet: direct intent bypassing browser blocks
+        window.location.href = "intent://www.youtube.com/#Intent;package=com.google.android.youtube;scheme=https;end;";
+      } else {
+        // Standard Web browser redirect
+        window.location.href = "https://www.youtube.com";
+      }
+    }
+
+    /* -------------------------------------------------------------
+       2. LIVE CLOCK & DATE ENGINE
+       ------------------------------------------------------------- */
+    function updateClock() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('en-US', { hour12: false });
+      const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+      
+      document.getElementById('os-clock').innerText = timeStr;
+      document.getElementById('os-date').innerText = dateStr;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    /* -------------------------------------------------------------
+       3. MODAL / APP MANAGEMENT
+       ------------------------------------------------------------- */
+    let currentApp = null;
+
+    function openApp(appId) {
+      closeAllModals();
+      const modal = document.getElementById('modal-' + appId);
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        currentApp = appId;
+
+        // Focus first focusable element in modal
+        setTimeout(() => {
+          const firstElem = modal.querySelector('.tv-focusable, button, input, select');
+          if (firstElem) firstElem.focus();
+        }, 100);
+
+        if (appId === 'scope') startScopeVisualizer();
+        if (appId === 'settings') updateDiagnostics();
+      }
+    }
+
+    function closeApp(appId) {
+      const modal = document.getElementById('modal-' + appId);
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+      currentApp = null;
+      refocusMainShelf();
+    }
+
+    function closeAllModals() {
+      document.querySelectorAll('[id^="modal-"]').forEach(modal => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      });
+      currentApp = null;
+    }
+
+    function refocusMainShelf() {
+      const firstTile = document.querySelector('#app-shelf .tv-focusable');
+      if (firstTile) firstTile.focus();
+    }
+
+    /* -------------------------------------------------------------
+       4. AUDIO ENGINE & SARGAM SYNTHESIZER (Bilawal Scale)
+       ------------------------------------------------------------- */
+    let audioCtx = null;
+    let synthWaveform = 'sawtooth';
+    let octaveShift = 0; // -1, 0, +1
+    let navSoundsEnabled = true;
+
+    // Sargam Scale Frequencies (Key of A)
+    // Sa: A3, Re: B3, Ga: C#4, Ma: D4, Pa: E4, Dha: F#4, Ni: G#4, Sa': A4
+    const sargamBaseFreqs = [220.00, 246.94, 277.18, 293.66, 329.63, 369.99, 415.30, 440.00];
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function setWaveform(wave) {
+      synthWaveform = wave;
+    }
+
+    function shiftOctave(delta) {
+      octaveShift = Math.max(-1, Math.min(1, octaveShift + delta));
+      const text = octaveShift === 0 ? 'Base' : (octaveShift > 0 ? '+1 Oct' : '-1 Oct');
+      document.getElementById('octave-display').innerText = text;
+    }
+
+    function playSargamNote(index) {
+      const ctx = getAudioContext();
+      const mult = Math.pow(2, octaveShift);
+      const freq = sargamBaseFreqs[index] * mult;
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = synthWaveform;
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+
+      gain.gain.setValueAtTime(0.35, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start();
+      osc.stop(ctx.currentTime + 1.2);
+
+      // Visual active key flash
+      const keyBtns = document.querySelectorAll('.piano-key');
+      if (keyBtns[index]) {
+        keyBtns[index].classList.add('active-key');
+        setTimeout(() => keyBtns[index].classList.remove('active-key'), 200);
+      }
+    }
+
+    // Play quick demo scale
+    function playSargamDemo() {
+      sargamBaseFreqs.forEach((freq, idx) => {
+        setTimeout(() => {
+          playSargamNote(idx);
+        }, idx * 280);
+      });
+    }
+
+    // UI Click Sound for Remote Navigation
+    function playNavTick() {
+      if (!navSoundsEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, ctx.currentTime);
+        gain.gain.setValueAtTime(0.04, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.05);
+      } catch (e) {}
+    }
+
+    function toggleNavSounds() {
+      navSoundsEnabled = !navSoundsEnabled;
+      const btn = document.getElementById('nav-sound-toggle-btn');
+      btn.innerText = navSoundsEnabled ? 'ENABLED' : 'DISABLED';
+      btn.className = navSoundsEnabled 
+        ? 'tv-focusable px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-bold'
+        : 'tv-focusable px-4 py-2 rounded-lg bg-red-500/20 border border-red-400/40 text-red-300 text-xs font-bold';
+    }
+
+    /* -------------------------------------------------------------
+       5. TANPURA DRONE ENGINE
+       ------------------------------------------------------------- */
+    let droneOsc1 = null;
+    let droneOsc2 = null;
+    let droneGain = null;
+    let isDroneRunning = false;
+
+    function toggleTanpuraDrone() {
+      const ctx = getAudioContext();
+      const btn = document.getElementById('drone-toggle-btn');
+
+      if (!isDroneRunning) {
+        droneOsc1 = ctx.createOscillator();
+        droneOsc2 = ctx.createOscillator();
+        droneGain = ctx.createGain();
+
+        droneOsc1.type = 'triangle';
+        droneOsc2.type = 'triangle';
+
+        // Sa (220 Hz) and Pa (329.63 Hz)
+        droneOsc1.frequency.setValueAtTime(220, ctx.currentTime);
+        droneOsc2.frequency.setValueAtTime(329.63, ctx.currentTime);
+
+        droneGain.gain.setValueAtTime(0.12, ctx.currentTime);
+
+        droneOsc1.connect(droneGain);
+        droneOsc2.connect(droneGain);
+        droneGain.connect(ctx.destination);
+
+        droneOsc1.start();
+        droneOsc2.start();
+        isDroneRunning = true;
+
+        btn.innerHTML = '<i class="ph-fill ph-stop"></i><span>Stop Tanpura Drone</span>';
+        btn.classList.add('border-emerald-400', 'text-emerald-300');
+      } else {
+        if (droneOsc1) droneOsc1.stop();
+        if (droneOsc2) droneOsc2.stop();
+        isDroneRunning = false;
+        btn.innerHTML = '<i class="ph-fill ph-play"></i><span>Start Ambient Drone</span>';
+        btn.classList.remove('border-emerald-400', 'text-emerald-300');
+      }
+    }
+
+    /* -------------------------------------------------------------
+       6. REALTIME SCOPE CANVAS VISUALIZER
+       ------------------------------------------------------------- */
+    let scopeRunning = false;
+    let scopeSpeed = 1;
+
+    function startScopeVisualizer() {
+      if (scopeRunning) return;
+      scopeRunning = true;
+      const canvas = document.getElementById('scope-canvas');
+      const ctx = canvas.getContext('2d');
+
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+
+      let phase = 0;
+
+      function render() {
+        if (currentApp !== 'scope') {
+          scopeRunning = false;
+          return;
+        }
+
+        ctx.fillStyle = '#020610';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Grid lines
+        ctx.strokeStyle = 'rgba(0, 229, 255, 0.08)';
+        ctx.lineWidth = 1;
+        for (let x = 0; x < canvas.width; x += 40) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, canvas.height);
+          ctx.stroke();
+        }
+        for (let y = 0; y < canvas.height; y += 40) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(canvas.width, y);
+          ctx.stroke();
+        }
+
+        // Animated Oscilloscope Waveform
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#00e5ff';
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = '#00e5ff';
+
+        ctx.beginPath();
+        const points = 80;
+        const slice = canvas.width / points;
+
+        for (let i = 0; i <= points; i++) {
+          const x = i * slice;
+          const y = (canvas.height / 2) + 
+                    Math.sin(phase + i * 0.25) * 35 + 
+                    Math.cos(phase * 0.7 + i * 0.1) * 20;
+
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        phase += 0.05 * scopeSpeed;
+        requestAnimationFrame(render);
+      }
+      render();
+    }
+
+    function adjustScopeSpeed(speed) {
+      scopeSpeed = speed;
+    }
+
+    function testScopeBeep() {
+      const ctx = getAudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(440, ctx.currentTime);
+      gain.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.6);
+    }
+
+    /* -------------------------------------------------------------
+       7. TERMINAL SHELL COMMAND EXECUTION
+       ------------------------------------------------------------- */
+    function execTermCommand() {
+      const input = document.getElementById('term-input');
+      const log = document.getElementById('term-log');
+      const val = input.value.trim().toLowerCase();
+      if (!val) return;
+
+      const userLine = document.createElement('div');
+      userLine.innerHTML = `<span class="text-cyan-400">apes@tv:~$</span> ${val}`;
+      log.appendChild(userLine);
+
+      const resp = document.createElement('div');
+
+      switch (val) {
+        case 'help':
+          resp.innerHTML = `Available commands:<br>
+          - <span class="text-white">sysinfo</span>: Display operating environment and memory stats<br>
+          - <span class="text-white">sargam_scale</span>: Output classical swaras and frequencies<br>
+          - <span class="text-white">clear</span>: Clear output buffer<br>
+          - <span class="text-white">launch_yt</span>: Trigger YouTube launcher`;
+          break;
+
+        case 'sysinfo':
+          resp.innerHTML = `VACELA APESUI TELEMETRY:<br>
+          - Core: v1.1 Cyber Edition (Standalone HTML)<br>
+          - Screen: ${window.innerWidth}x${window.innerHeight} (${window.devicePixelRatio}x)<br>
+          - Audio Driver: Web Audio API Active<br>
+          - User Agent: ${navigator.userAgent.slice(0, 50)}...`;
+          break;
+
+        case 'sargam_scale':
+          resp.innerHTML = `SARGAM BILAWAL FREQUENCIES (A3 - A4):<br>
+          Sa: 220.00 Hz | Re: 246.94 Hz | Ga: 277.18 Hz | Ma: 293.66 Hz<br>
+          Pa: 329.63 Hz | Dha: 370.00 Hz | Ni: 415.30 Hz | Sa': 440.00 Hz`;
+          break;
+
+        case 'clear':
+          log.innerHTML = '';
+          input.value = '';
+          return;
+
+        case 'launch_yt':
+          resp.innerText = "Launching YouTube engine...";
+          setTimeout(launchAdaptiveYouTube, 600);
+          break;
+
+        default:
+          resp.innerHTML = `<span class="text-red-400">Unknown command '${val}'. Type 'help' for options.</span>`;
+          break;
+      }
+
+      log.appendChild(resp);
+      input.value = '';
+      log.scrollTop = log.scrollHeight;
+    }
+
+    document.getElementById('term-input')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') execTermCommand();
+    });
+
+    /* -------------------------------------------------------------
+       8. DIAGNOSTICS & HARDWARE READOUT
+       ------------------------------------------------------------- */
+    function updateDiagnostics() {
+      document.getElementById('diag-res').innerText = `${window.innerWidth} x ${window.innerHeight}`;
+      document.getElementById('diag-dpr').innerText = `${window.devicePixelRatio}x`;
+      document.getElementById('diag-ua').innerText = navigator.platform || 'Smart TV Engine';
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+      }
+    }
+
+    /* -------------------------------------------------------------
+       9. SPATIAL REMOTE D-PAD NAVIGATION ENGINE
+       ------------------------------------------------------------- */
+    window.addEventListener('keydown', (e) => {
+      // 1. Numeric Sargam shortcuts (Keys 1 - 8)
+      if (e.key >= '1' && e.key <= '8') {
+        const noteIdx = parseInt(e.key) - 1;
+        playSargamNote(noteIdx);
+        return;
+      }
+
+      // 2. Escape / Return / Back button
+      if (e.key === 'Escape' || e.key === 'Backspace') {
+        if (currentApp) {
+          e.preventDefault();
+          closeApp(currentApp);
+          return;
+        }
+      }
+
+      // 3. Arrow Navigation across focusable elements
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        e.preventDefault();
+
+        const activeContainer = currentApp 
+          ? document.getElementById('modal-' + currentApp)
+          : document.getElementById('os-root');
+
+        const focusables = Array.from(
+          activeContainer.querySelectorAll('.tv-focusable, button, select, input, a')
+        ).filter(el => {
+          return el.offsetParent !== null && !el.disabled;
+        });
+
+        if (focusables.length === 0) return;
+
+        let currentIndex = focusables.indexOf(document.activeElement);
+
+        if (currentIndex === -1) {
+          focusables[0].focus();
+          playNavTick();
+          return;
+        }
+
+        let nextIndex = currentIndex;
+
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          nextIndex = (currentIndex + 1) % focusables.length;
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          nextIndex = (currentIndex - 1 + focusables.length) % focusables.length;
+        }
+
+        if (focusables[nextIndex]) {
+          focusables[nextIndex].focus();
+          playNavTick();
+        }
+      }
+    });
+
+    // Auto-focus on start
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(refocusMainShelf, 250);
+    });
+  </script>
+</body>
+</html>
